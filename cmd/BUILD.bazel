@@ -1,0 +1,29 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "hue_exporter.go",
+        "lights.go",
+        "sensors.go",
+    ],
+    importpath = "github.com/mickael-carl/hue_exporter/cmd",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//pkg/lights:go_default_library",
+        "//pkg/sensors:go_default_library",
+        "//pkg/util:go_default_library",
+        "@com_github_alecthomas_kingpin//:go_default_library",
+        "@com_github_parnurzeal_gorequest//:go_default_library",
+        "@com_github_prometheus_client_golang//prometheus:go_default_library",
+        "@com_github_prometheus_client_golang//prometheus/promhttp:go_default_library",
+        "@com_github_prometheus_common//log:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "cmd",
+    embed = [":go_default_library"],
+    visibility = ["//visibility:public"],
+    pure = "on",
+)
