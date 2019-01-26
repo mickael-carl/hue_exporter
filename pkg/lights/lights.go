@@ -16,7 +16,6 @@ type LightState struct {
 	Reachable        bool
 }
 
-
 type Gamut []float32
 
 type ColorTemperatureLimits struct {
