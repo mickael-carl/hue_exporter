@@ -1,5 +1,7 @@
 package lights
 
+import "github.com/mickael-carl/hue_exporter/pkg/common"
+
 type LightState struct {
 	On               bool
 	Brightness       int `json:"bri"`
@@ -14,10 +16,6 @@ type LightState struct {
 	Reachable        bool
 }
 
-type LightSoftwareUpdate struct {
-	State       string
-	LastInstall string
-}
 
 type Gamut []float32
 
@@ -59,7 +57,7 @@ type LightConfig struct {
 
 type LightAttributes struct {
 	State            LightState
-	SoftwareUpdate   LightSoftwareUpdate `json:"swupdate"`
+	SoftwareUpdate   common.SoftwareUpdate `json:"swupdate"`
 	Type             string
 	Name             string
 	ModelId          string

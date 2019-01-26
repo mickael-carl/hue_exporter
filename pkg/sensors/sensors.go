@@ -1,24 +1,37 @@
 package sensors
 
-type TempSensorState struct {
-	Temperature int
-	LastUpdated string
+import "github.com/mickael-carl/hue_exporter/pkg/common"
+
+type SensorState struct {
+	Temperature *int
+	Presence *bool
+	ButtonEvent *int
+	Status *int
+	Flag *bool
+	LightLevel *int
+	Dark *bool
+	Daylight *bool
+	LastUpdated *string
 }
 
-type TempSensorConfig struct {
+type SensorConfig struct {
 	On            bool
-	Battery       int
-	Reachable     bool
-	Alert         string
-	LedIndication bool
-	UserTest      bool
-	Pending       interface{}
+	Battery       *int
+	Reachable     *bool
+	Alert         *string
+	LedIndication *bool
+	UserTest      *bool
+	Pending       *interface{}
+	Sensitivity   *int
+	SensitivityMax *int
+	SunriseOffset *int
+	SunsetOffset  *int
 }
 
 type SensorAttributes struct {
-	State            interface{}
-	SwUpdate         interface{}
-	Config           interface{}
+	State            SensorState
+	SwUpdate         *common.SoftwareUpdate
+	Config           SensorConfig
 	Name             string
 	Type             string
 	ModelId          string

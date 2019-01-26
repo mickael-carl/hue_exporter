@@ -13,7 +13,8 @@ Metrics are available for the following:
  * Color
  * Brightness
 
-It supports both colored and white bulbs from Hue or compatible bulbs.
+It supports both colored and white bulbs from Hue or compatible bulbs (such as
+IKEA Trädfri).
 
 ### Sensors
 
@@ -24,9 +25,12 @@ Metrics are available for the following:
 
 Additionally the following is also available:
  
- * Temperature sensor:
+ * Temperature sensor (such as the Philips Hue motion sensor):
    * Battery
    * Temperature
+ * Presence sensor (such as the Philips Hue motion sensor):
+   * Battery
+   * Presence indication
 
 ## Running the exporter
 

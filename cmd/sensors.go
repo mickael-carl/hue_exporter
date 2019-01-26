@@ -14,6 +14,7 @@ var (
 	hueSensorReachableDesc   = util.NewHueDesc("sensor", "reachable", "Whether the sensor is reachable or not.", "type")
 	hueSensorBatteryDesc     = util.NewHueDesc("sensor", "battery_percent", "Remaining battery in the sensor.", "type")
 	hueSensorTemperatureDesc = util.NewHueDesc("sensor", "temperature_degrees", "Temperature measured by the sensor.", "type")
+	hueSensorPresenceDesc    = util.NewHueDesc("sensor", "presence", "Whether presence is detected by the sensor.", "type")
 )
 
 func sensorsCollect(address string, userToken string, ch chan<- prometheus.Metric) error {
@@ -28,23 +29,30 @@ func sensorsCollect(address string, userToken string, ch chan<- prometheus.Metri
 		return err
 	}
 	for id, sensor := range sensors {
-		config := sensor.Config.(map[string]interface{})
-		state := sensor.State.(map[string]interface{})
-		switch sensor.Type {
-		case "ZLLTemperature":
-			if config["on"].(bool) {
-				ch <- util.NewHueGauge(hueSensorStateDesc, 1.0, id, sensor.Name, "temperature")
+		if sensor.Config.On {
+			ch <- util.NewHueGauge(hueSensorStateDesc, 1.0, id, sensor.Name, sensor.Type)
+		} else {
+			ch <- util.NewHueGauge(hueSensorStateDesc, 0.0, id, sensor.Name, sensor.Type)
+		}
+		if sensor.Config.Reachable != nil {
+			if *sensor.Config.Reachable {
+				ch <- util.NewHueGauge(hueSensorReachableDesc, 1.0, id, sensor.Name, sensor.Type)
 			} else {
-				ch <- util.NewHueGauge(hueSensorStateDesc, 0.0, id, sensor.Name, "temperature")
+				ch <- util.NewHueGauge(hueSensorReachableDesc, 0.0, id, sensor.Name, sensor.Type)
 			}
-			if config["reachable"].(bool) {
-				ch <- util.NewHueGauge(hueSensorReachableDesc, 1.0, id, sensor.Name, "temperature")
+		}
+		if sensor.Config.Battery != nil {
+			ch <- util.NewHueGauge(hueSensorBatteryDesc, float64(*sensor.Config.Battery), id, sensor.Name, sensor.Type)
+		}
+		if sensor.State.Temperature != nil {
+			ch <- util.NewHueGauge(hueSensorTemperatureDesc, float64(*sensor.State.Temperature)/100, id, sensor.Name, sensor.Type)
+		}
+		if sensor.State.Presence != nil {
+			if *sensor.State.Presence {
+				ch <- util.NewHueGauge(hueSensorPresenceDesc, 1.0, id, sensor.Name, sensor.Type)
 			} else {
-				ch <- util.NewHueGauge(hueSensorReachableDesc, 0.0, id, sensor.Name, "temperature")
+				ch <- util.NewHueGauge(hueSensorPresenceDesc, 0.0, id, sensor.Name, sensor.Type)
 			}
-			ch <- util.NewHueGauge(hueSensorBatteryDesc, config["battery"].(float64), id, sensor.Name, "temperature")
-			ch <- util.NewHueGauge(hueSensorTemperatureDesc, state["temperature"].(float64)/100, id, sensor.Name, "temperature")
-		default:
 		}
 	}
 	return nil

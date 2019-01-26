@@ -5,4 +5,5 @@ go_library(
     srcs = ["sensors.go"],
     importpath = "github.com/mickael-carl/hue_exporter/pkg/sensors",
     visibility = ["//visibility:public"],
+    deps = ["//pkg/common:go_default_library"],
 )
