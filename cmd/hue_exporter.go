@@ -39,6 +39,12 @@ func (e *HueExporter) Collect(ch chan<- prometheus.Metric) {
 		log.Error("Failed to gather info on Hue system: ", err)
 		ch <- prometheus.MustNewConstMetric(
 			hueScrapeSuccessDesc, prometheus.GaugeValue, 0.0)
+	}
+	err = groupsCollect(e.address, e.userToken, ch)
+	if err != nil {
+		log.Error("Failed to gather info on Hue system: ", err)
+		ch <- prometheus.MustNewConstMetric(
+			hueScrapeSuccessDesc, prometheus.GaugeValue, 0.0)
 	} else {
 		ch <- prometheus.MustNewConstMetric(
 			hueScrapeSuccessDesc, prometheus.GaugeValue, 1.0)

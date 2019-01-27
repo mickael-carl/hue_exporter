@@ -11,13 +11,13 @@ import (
 )
 
 var (
-	hueSensorStateDesc       = util.NewHueDesc("sensor", "state", "Whether the sensor is on or off.", "type")
-	hueSensorReachableDesc   = util.NewHueDesc("sensor", "reachable", "Whether the sensor is reachable or not.", "type")
-	hueSensorBatteryDesc     = util.NewHueDesc("sensor", "battery_percent", "Remaining battery in the sensor.", "type")
-	hueSensorTemperatureDesc = util.NewHueDesc("sensor", "temperature_degrees", "Temperature measured by the sensor.", "type")
-	hueSensorPresenceDesc    = util.NewHueDesc("sensor", "presence", "Whether presence is detected by the sensor.", "type")
-	hueSensorLightLevelDesc  = util.NewHueDesc("sensor", "light_level_lumens", "Light level measured by the sensor.", "type")
-	hueSensorDaylightDesc    = util.NewHueDesc("sensor", "daylight", "Weather current time is between sunrise and sunset at current location.", "type")
+	hueSensorStateDesc         = util.NewHueDesc("sensor", "state", "Whether the sensor is on or off.", "type")
+	hueSensorReachableDesc     = util.NewHueDesc("sensor", "reachable", "Whether the sensor is reachable or not.", "type")
+	hueSensorBatteryDesc       = util.NewHueDesc("sensor", "battery_percent", "Remaining battery in the sensor.", "type")
+	hueSensorTemperatureDesc   = util.NewHueDesc("sensor", "temperature_degrees", "Temperature measured by the sensor.", "type")
+	hueSensorPresenceDesc      = util.NewHueDesc("sensor", "presence", "Whether presence is detected by the sensor.", "type")
+	hueSensorLightLevelDesc    = util.NewHueDesc("sensor", "light_level_lumens", "Light level measured by the sensor.", "type")
+	hueSensorDaylightDesc      = util.NewHueDesc("sensor", "daylight", "Weather current time is between sunrise and sunset at current location.", "type")
 	hueSensorButtonPressedDesc = util.NewHueDesc("sensor", "button_pressed", "Code of the last switch event of the sensor.", "type")
 )
 
