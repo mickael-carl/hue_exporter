@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 
 	"github.com/mickael-carl/hue_exporter/pkg/lights"
@@ -20,9 +21,10 @@ var (
 	hueLightsYDesc          = util.NewHueDesc("light", "color_y", "The Y value of the light's color.")
 )
 
-func lightsCollect(address string, userToken string, ch chan<- prometheus.Metric) error {
+func lightsCollect(address string, tlsConfig *tls.Config, userToken string, ch chan<- prometheus.Metric) error {
 	request := gorequest.New()
 	_, body, errs := request.Get(address + "/api/" + userToken + "/lights").
+		TLSClientConfig(tlsConfig).
 		End()
 	if errs != nil {
 		return errs[0]

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"math"
 
@@ -21,9 +22,10 @@ var (
 	hueSensorButtonPressedDesc = util.NewHueDesc("sensor", "button_pressed", "Code of the last switch event of the sensor.", "type")
 )
 
-func sensorsCollect(address string, userToken string, ch chan<- prometheus.Metric) error {
+func sensorsCollect(address string, tlsConfig *tls.Config, userToken string, ch chan<- prometheus.Metric) error {
 	request := gorequest.New()
 	_, body, errs := request.Get(address + "/api/" + userToken + "/sensors").
+		TLSClientConfig(tlsConfig).
 		End()
 	if errs != nil {
 		return errs[0]

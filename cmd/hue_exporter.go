@@ -1,7 +1,9 @@
 package main
 
 import (
+	"crypto/tls"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/alecthomas/kingpin"
@@ -24,23 +26,24 @@ var (
 
 type HueExporter struct {
 	address   string
+	tlsConfig *tls.Config
 	userToken string
 }
 
 func (e *HueExporter) Collect(ch chan<- prometheus.Metric) {
-	err := lightsCollect(e.address, e.userToken, ch)
+	err := lightsCollect(e.address, e.tlsConfig, e.userToken, ch)
 	if err != nil {
 		log.Error("Failed to gather info on Hue system: ", err)
 		ch <- prometheus.MustNewConstMetric(
 			hueScrapeSuccessDesc, prometheus.GaugeValue, 0.0)
 	}
-	err = sensorsCollect(e.address, e.userToken, ch)
+	err = sensorsCollect(e.address, e.tlsConfig, e.userToken, ch)
 	if err != nil {
 		log.Error("Failed to gather info on Hue system: ", err)
 		ch <- prometheus.MustNewConstMetric(
 			hueScrapeSuccessDesc, prometheus.GaugeValue, 0.0)
 	}
-	err = groupsCollect(e.address, e.userToken, ch)
+	err = groupsCollect(e.address, e.tlsConfig, e.userToken, ch)
 	if err != nil {
 		log.Error("Failed to gather info on Hue system: ", err)
 		ch <- prometheus.MustNewConstMetric(
@@ -55,16 +58,32 @@ func (e *HueExporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- hueScrapeSuccessDesc
 }
 
-func newHueExporter(address string, userToken string) (*HueExporter, error) {
+func newHueExporter(address string, tlsConfig *tls.Config, userToken string) (*HueExporter, error) {
 	return &HueExporter{
 		address:   address,
+		tlsConfig: tlsConfig,
 		userToken: userToken,
 	}, nil
 }
 
 func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
-	exporter, err := newHueExporter(*bridgeAddress, *userToken)
+	address, err := url.Parse(*bridgeAddress)
+	if err != nil {
+		log.Fatalln("Error parsing url of the bridge:", err)
+	}
+	var tlsConfig *tls.Config
+	switch address.Scheme {
+	case "https":
+		tlsConfig = &tls.Config{
+			InsecureSkipVerify: true,
+		}
+	case "http":
+		tlsConfig = &tls.Config{}
+	default:
+		log.Fatal("Unrecognized scheme in bridge address.")
+	}
+	exporter, err := newHueExporter(*bridgeAddress, tlsConfig, *userToken)
 	if err != nil {
 		log.Error(err)
 	}

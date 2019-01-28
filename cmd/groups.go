@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 
 	"github.com/mickael-carl/hue_exporter/pkg/groups"
@@ -10,13 +11,14 @@ import (
 )
 
 var (
-	hueGroupsLightsNumberDesc = util.NewHueDesc("group", "lights", "The number of lights belonging to the group.", "type")
+	hueGroupsLightsNumberDesc  = util.NewHueDesc("group", "lights", "The number of lights belonging to the group.", "type")
 	hueGroupsSensorsNumberDesc = util.NewHueDesc("group", "sensors", "The number of sensors belonging to the group.", "type")
 )
 
-func groupsCollect(address string, userToken string, ch chan<- prometheus.Metric) error {
+func groupsCollect(address string, tlsConfig *tls.Config, userToken string, ch chan<- prometheus.Metric) error {
 	request := gorequest.New()
 	_, body, errs := request.Get(address + "/api/" + userToken + "/groups").
+		TLSClientConfig(tlsConfig).
 		End()
 	if errs != nil {
 		return errs[0]
